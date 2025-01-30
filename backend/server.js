@@ -13,7 +13,7 @@ app.use(cors());
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/Orders');
+  await mongoose.connect(process.env.MONGO_URL);
 }
 
 app.get('/', async (req, res) => {
@@ -25,6 +25,7 @@ app.get('/', async (req, res) => {
   let totalCosts = 0;
   let totalAdspend = await adspend.getFbAdspend(today);
   const timeOrders = await Order.find({created_at: {$gt: today}});
+  console.log(timeOrders);
   for (const order of timeOrders) {
     totalRevenue += order.total;
     totalRefunds += order.refundedAmount;
@@ -56,7 +57,7 @@ app.get('/update', async (req, res) => {
 });
 
 // Start the server
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

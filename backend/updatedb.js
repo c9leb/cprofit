@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const Order = require('./models/order');
 const Product = require('./models/product');
 require('dotenv').config();
-
 const shopify = new Shopify({
   shopName: process.env.SHOPIFY_STORE_NAME,
   apiKey: process.env.SHOPIFY_API_KEY,
@@ -32,6 +31,9 @@ async function updateOrderDatebase() {
   } while (params !== undefined);
 
   for (const order of allOrders) {
+    if(order.name == '#3155502KW') {
+      console.log(order);
+    }
     if ((['refunded', 'partially_refunded', 'cancelled', 'voided'].includes(order.financial_status) && new Date(order.refunds[0].created_at) < today) || new Date(order.created_at) < today && ['paid'].includes(order.financial_status)) {
       continue;
     }
