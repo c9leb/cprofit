@@ -16,7 +16,7 @@ async function main() {
   await mongoose.connect(process.env.MONGO_URL);
 }
 
-app.get('/', async (req, res) => {
+app.get('/api', async (req, res) => {
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -48,7 +48,7 @@ app.get('/', async (req, res) => {
           });
 });
 
-app.get('/update', async (req, res) => {
+app.get('/api/update', async (req, res) => {
 
   update.updateOrderDatebase()
   update.updateProductDatebase()
