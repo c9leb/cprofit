@@ -25,10 +25,8 @@ app.get('/', async (req, res) => {
   let totalRefunds = 0;
   let totalCosts = 0;
   let totalAdspend = await adspend.getFbAdspend(today);
-  console.log('hi');
   const timeOrders = await Order.find({created_at: {$gt: today}});
   for (const order of timeOrders) {
-    console.log(order.total);
     totalRevenue += order.total;
     totalRefunds += order.refundedAmount;
   }
