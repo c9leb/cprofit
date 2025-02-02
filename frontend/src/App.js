@@ -5,7 +5,7 @@ function App() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch('/api')
+    fetch('https://cprofit-backend.vercel.app/')
       .then(response => response.json())
       .then(data => setData(data));
   }, []);
