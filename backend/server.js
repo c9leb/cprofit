@@ -13,7 +13,7 @@ app.use(cors());
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect(process.env.MONGO_URI);
+  await mongoose.connect(process.env.MONGODB_URI);
 }
 
 app.get('/', async (req, res) => {
