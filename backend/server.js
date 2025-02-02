@@ -6,9 +6,19 @@ const update = require('./updatedb');
 const Order = require('./models/order');
 const Product = require('./models/product');
 const cors = require('cors');
+
 app.use(express.json());
 app.use(cors());
-//for fronted number update, make the numbers soft flash like coinbase, stock number changing
+
+const API_KEY = process.env.API_KEY; 
+
+function auth(req, res, next) {
+  const apiKey = req.headers['x-api-key'];
+  if (!apiKey || apiKey !== API_KEY) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  next();
+}
 
 main().catch(err => console.log(err));
 
@@ -16,14 +26,7 @@ async function main() {
   await mongoose.connect(process.env.MONGODB_URI);
 }
 
-app.use(cors({
-  origin: ['cprofit-frontend.vercel.app'],
-  methods: ['GET', 'POST'],
-  credentials: true,
-}));
-
-app.get('/', async (req, res) => {
-
+app.get('/', auth, async (req, res) => {
   const today = new Date();
   today.setHours(today.getHours() - 8);
   today.setHours(0, 0, 0, 0);
@@ -31,7 +34,8 @@ app.get('/', async (req, res) => {
   let totalRefunds = 0;
   let totalCosts = 0;
   let totalAdspend = await adspend.getFbAdspend(today);
-  const timeOrders = await Order.find({created_at: {$gt: today}});
+  const timeOrders = await Order.find({ created_at: { $gt: today } });
+  
   for (const order of timeOrders) {
     totalRevenue += order.total;
     totalRefunds += order.refundedAmount;
@@ -39,30 +43,28 @@ app.get('/', async (req, res) => {
   for (const order of timeOrders) {
     const products = order.products;
     for (const sku of products) {
-      const product = await Product.findOne({_id: sku});
+      const product = await Product.findOne({ _id: sku });
       if (product) {
         totalCosts += product.cost;
       }
     }
   }
   res.json({
-            Date: today.toISOString().slice(0, 10),
-            Revenue: (totalRevenue-totalRefunds).toFixed(2),
-            Refunds: (totalRefunds).toFixed(2),
-            Adspend: totalAdspend,
-            COGS: totalCosts.toFixed(2),
-            Profit: (totalRevenue-totalCosts-totalAdspend-totalRefunds).toFixed(2)
-          });
+    Date: today.toISOString().slice(0, 10),
+    Revenue: (totalRevenue - totalRefunds).toFixed(2),
+    Refunds: totalRefunds.toFixed(2),
+    Adspend: totalAdspend,
+    COGS: totalCosts.toFixed(2),
+    Profit: (totalRevenue - totalCosts - totalAdspend - totalRefunds).toFixed(2)
+  });
 });
 
-app.get('/update', async (req, res) => {
-
-  update.updateOrderDatebase()
-  update.updateProductDatebase()
-  res.send("Updated.")
+app.get('/update', auth, async (req, res) => {
+  update.updateOrderDatebase();
+  update.updateProductDatebase();
+  res.send("Updated.");
 });
 
-// Start the server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

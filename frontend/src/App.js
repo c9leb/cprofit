@@ -5,7 +5,11 @@ function App() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch('https://cprofit-backend.vercel.app/')
+    fetch('https://cprofit-backend.vercel.app/', {
+      headers: {
+        'x-api-key': process.env.REACT_APP_API_KEY
+      }
+    })
       .then(response => response.json())
       .then(data => setData(data));
   }, []);
