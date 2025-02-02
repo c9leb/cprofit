@@ -16,6 +16,12 @@ async function main() {
   await mongoose.connect(process.env.MONGODB_URI);
 }
 
+app.use(cors({
+  origin: ['cprofit-frontend.vercel.app'],
+  methods: ['GET', 'POST'],
+  credentials: true,
+}));
+
 app.get('/', async (req, res) => {
 
   const today = new Date();
