@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import { Calendar } from "@/components/ui/calendar"
 interface DataType {
   [key: string]: string | number;
 }
@@ -22,6 +23,7 @@ function App() {
       {Object.entries(data).map(([key, value]) => (
         <div key={key}>{key}: {value}</div>
       ))}
+      <Calendar />
     </div>
   );
 }
