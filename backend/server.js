@@ -57,6 +57,14 @@ app.get('/update', async (req, res) => {
   res.send("Updated.")
 });
 
+
+
+
+/*
+
+WEBHOOKS
+
+*/
 app.post('/webhooks/update', async (req, res) => {
   console.log('a');
   console.log(req.body);
