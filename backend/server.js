@@ -18,6 +18,7 @@ async function main() {
 
 app.get('/', async (req, res) => {
 
+  console.log('hi');
   const today = new Date();
   today.setHours(today.getHours() - 8);
   today.setHours(0, 0, 0, 0);
