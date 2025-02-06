@@ -7,7 +7,15 @@
   ],
   "routes": [
     {
-      "src": "/api/webhooks/(.*)",  
+      "src": "/webhooks/update",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/webhooks/product",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/(.*)",
       "dest": "/server.js"
     }
   ]
