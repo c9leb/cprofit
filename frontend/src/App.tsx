@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
 interface DataType {
   [key: string]: string | number;
 }
@@ -17,10 +25,22 @@ function App() {
     return <div>Loading...</div>;
   }
 
+  // Filter out date-related entries
+  const filteredData = Object.entries(data).filter(
+    ([key]) => key.toLowerCase() !== 'date'
+  );
+
   return (
-    <div className="element">
-      {Object.entries(data).map(([key, value]) => (
-        <div key={key}>{key}: {value}</div>
+    <div className="flex flex-row gap-4 flex-wrap">
+      {filteredData.map(([key, value]) => (
+        <Card key={key} className="w-64">
+          <CardHeader>
+            <CardTitle>{key}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{value}</p>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );

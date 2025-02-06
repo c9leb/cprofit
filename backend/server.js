@@ -49,12 +49,12 @@ app.get('/', async (req, res) => {
           });
 });
 
-// app.get('/update', async (req, res) => {
+app.get('/update', async (req, res) => {
 
-//   update.updateOrderDatebase()
-//   update.updateProductDatebase()
-//   res.send("Updated.")
-// });
+  update.updateOrderDatebase()
+  update.updateProductDatebase()
+  res.send("Updated.")
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
