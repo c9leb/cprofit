@@ -8,7 +8,7 @@
   "routes": [
     {
       "src": "/webhooks/update",
-      "dest": "/webhooks.js",
+      "dest": "/server.js",
       "methods": ["POST"]
     },
     {
