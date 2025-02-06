@@ -7,16 +7,7 @@
   ],
   "routes": [
     {
-      "src": "/webhooks/update",
-      "dest": "/webhooks.js",
-      "methods": ["POST"]
-    },
-    {
-      "src": "/webhooks/product",
-      "dest": "/webhooks.js"
-    },
-    {
-      "src": "/",
+      "src": "/(.*)",
       "dest": "/server.js"
     }
   ]
