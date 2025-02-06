@@ -1,4 +1,5 @@
 app.post('/webhooks/update', async (req, res) => {
+    console.log(req.body)
     const order = req.body;
     const today = new Date();
     today.setHours(today.getHours() - 1);
