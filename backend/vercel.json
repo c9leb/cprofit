@@ -8,11 +8,11 @@
   "routes": [
     {
       "src": "/webhooks/update",
-      "dest": "/server.js"
+      "dest": "/webhooks.js"
     },
     {
       "src": "/webhooks/product",
-      "dest": "/server.js"
+      "dest": "/webhooks.js"
     },
     {
       "src": "/(.*)",
