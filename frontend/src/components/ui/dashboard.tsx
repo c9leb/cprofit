@@ -75,7 +75,7 @@ export default function Dashboard() {
           setLoading(false);
         });
     }
-  }, [dateRange]); // Dependency array should include dateRange
+  }, [dateRange]);
   const handleDateChange = (newDateRange: DateRange | undefined) => {
     setDateRange(newDateRange);
   };
