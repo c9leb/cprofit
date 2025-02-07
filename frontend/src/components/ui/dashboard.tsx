@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ModeToggle } from "@/components/ui/theme-toggle"
 import { DatePickerWithRange } from "@/components/ui/datepicker"
@@ -103,10 +103,13 @@ export default function Dashboard() {
   let revSign = Math.sign(revenueDiff) === 1 ? "+" : "";
   let adspendSign = Math.sign(adspendDiff) === 1 ? "+" : "";
 
-  const dataForChart = Object.keys(data.currentPeriod.Revenues).map(date => ({
+  const dataForChart = Object.keys(data.currentPeriod.Revenues)
+  .map(date => ({
     date,
     revenue: data.currentPeriod.Revenues[date]
-  }));
+  }))
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
   return (
     <div className="min-h-screen bg-background font-sans antialiased">
       <header className="border-b font-sans">
@@ -217,18 +220,26 @@ export default function Dashboard() {
                   data={dataForChart}
                   margin={{
                     top: 20,
+                    left: 12
                   }}
                 >
                   <CartesianGrid vertical={false} />
                   <XAxis
                     dataKey="date"
-                    tickLine={false}
+                    tickLine={true}
                     tickMargin={10}
                     axisLine={false}
+                    interval="preserveStartEnd"
                     tickFormatter={(value) => value.slice(5, 10)}
                   />
+                  <YAxis
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickMargin={10}
+                    tickFormatter={(value: number) => `$${value.toFixed(2)}`} // Optional: format the Y-axis ticks (e.g., show $)
+                  />
                   <ChartTooltip
-                    cursor={false}
+                    cursor={true}
                     content={<ChartTooltipContent hideLabel />}
                   />
                   <Bar dataKey="revenue" fill="var(--color-desktop)" radius={8}>
