@@ -15,7 +15,9 @@ const fields = [
     'spend',
 ];
 async function getFbAdspend(fromDate, toDate) {
-
+    fromDate = fromDate.toISOString().slice(0, 10);  // Convert to 'YYYY-MM-DD' format
+    toDate = toDate.toISOString().slice(0, 10);  // Convert to 'YYYY-MM-DD' format
+    
     try {
         const spend = await (new AdAccount(ad_account_id)).getInsights(fields, {
             'time_range': {'since': fromDate, 'until': toDate},
