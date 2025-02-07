@@ -63,12 +63,12 @@ export default function Dashboard() {
     COGS: parseFloat(String(data.currentPeriod.COGS)),
     Profit: parseFloat(String(data.currentPeriod.Profit)),
   };
-  const formattedData = {
-    Revenue: parseFloat(String(data.currentPeriod.Revenue)),
-    Refunds: parseFloat(String(data.currentPeriod.Refunds)),
-    Adspend: parseFloat(String(data.currentPeriod.Adspend)),
-    COGS: parseFloat(String(data.currentPeriod.COGS)),
-    Profit: parseFloat(String(data.currentPeriod.Profit)),
+  const previousData = {
+    Revenue: parseFloat(String(data.previousPeriod.Revenue)),
+    Refunds: parseFloat(String(data.previousPeriod.Refunds)),
+    Adspend: parseFloat(String(data.previousPeriod.Adspend)),
+    COGS: parseFloat(String(data.previousPeriod.COGS)),
+    Profit: parseFloat(String(data.previousPeriod.Profit)),
   };
   
 
