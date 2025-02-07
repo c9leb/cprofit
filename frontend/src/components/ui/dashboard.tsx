@@ -57,11 +57,11 @@ export default function Dashboard() {
     return <div>Loading...</div>;
   }
   const formattedData = {
-    Revenue: parseFloat(String(data.Revenue)),
-    Refunds: parseFloat(String(data.Refunds)),
-    Adspend: parseFloat(String(data.Adspend)),
-    COGS: parseFloat(String(data.COGS)),
-    Profit: parseFloat(String(data.Profit)),
+    Revenue: parseFloat(String(data.currentPeriod.Revenue)),
+    Refunds: parseFloat(String(data.currentPeriod.Refunds)),
+    Adspend: parseFloat(String(data.currentPeriod.Adspend)),
+    COGS: parseFloat(String(data.currentPeriod.COGS)),
+    Profit: parseFloat(String(data.currentPeriod.Profit)),
   };
   
 
