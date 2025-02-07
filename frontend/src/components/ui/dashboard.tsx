@@ -1,12 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent, CardDescription, CardHeader, CardFooter, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ModeToggle } from "@/components/ui/theme-toggle"
 import { DatePickerWithRange } from "@/components/ui/datepicker"
 import { LoadingSpinner } from "@/components/ui/loadingspinner"
-import { CreditCard, DollarSign, Users, TrendingUp } from "lucide-react"
+import { CreditCard, DollarSign, Users } from "lucide-react"
 import { Activity } from "lucide-react"
 import { DateRange } from 'react-day-picker';
 import { useEffect, useState } from 'react';
