@@ -18,7 +18,6 @@ async function main() {
 
 app.get('/', async (req, res) => {
 
-  console.log('hi');
   const today = new Date();
   today.setHours(today.getHours() - 8);
   today.setHours(0, 0, 0, 0);
@@ -66,8 +65,6 @@ WEBHOOKS
 
 */
 app.post('/webhooks/update', async (req, res) => {
-  console.log('a');
-  console.log(req.body);
   const order = req.body;
   const today = new Date();
   today.setHours(today.getHours() - 1);
