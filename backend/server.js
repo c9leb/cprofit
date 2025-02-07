@@ -58,7 +58,9 @@ app.get('/', async (req, res) => {
       revenues[dateKey] = parseFloat(revenues[dateKey].toFixed(2));
       totalRefunds += order.refundedAmount;
     }
-
+    const sortedRevenues = Object.entries(revenues)
+      .map(([date, revenue]) => ({ date, revenue }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
     for (const order of orders) {
       for (const sku of order.products) {
         const product = await Product.findOne({ _id: sku });
@@ -74,7 +76,7 @@ app.get('/', async (req, res) => {
       Adspend: totalAdspend,
       COGS: (totalCosts).toFixed(2),
       Profit: (totalRevenue - totalCosts - totalAdspend - totalRefunds).toFixed(2),
-      Revenues: revenues
+      Revenues: sortedRevenues
     };
   }
 
