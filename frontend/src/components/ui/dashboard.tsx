@@ -9,8 +9,25 @@ import { Activity } from "lucide-react"
 import { DateRange } from 'react-day-picker';
 import { useEffect, useState } from 'react';
 
+interface PeriodData {
+  Revenue: number;
+  Refunds: number;
+  Adspend: number;
+  COGS: number;
+  Profit: number;
+  Revenues: { [date: string]: number }; 
+}
+
 interface DataType {
-  [key: string]: string | number;
+  currentPeriod: PeriodData;
+  previousPeriod: PeriodData;
+}
+
+function calculatePercentDifference(value1: number, value2: number) {
+  const difference = Math.abs(value1 - value2);
+  const average = (value1 + value2) / 2;
+  const percentDifference = (difference / average) * 100;
+  return percentDifference;
 }
 
 export default function Dashboard() {
@@ -53,7 +70,7 @@ export default function Dashboard() {
   };
 
 
-  if (!data) {
+  if (!data || !data.currentPeriod || !data.previousPeriod) {
     return <div>Loading...</div>;
   }
   const formattedData = {
@@ -70,8 +87,10 @@ export default function Dashboard() {
     COGS: parseFloat(String(data.previousPeriod.COGS)),
     Profit: parseFloat(String(data.previousPeriod.Profit)),
   };
-  
-
+  let revenueDiff = calculatePercentDifference(formattedData?.Revenue, previousData?.Revenue);
+  let adspendDiff = calculatePercentDifference(formattedData?.Adspend, previousData?.Adspend);
+  let revSign = Math.sign(revenueDiff) === 1 ? "+" : "";
+  let adspendSign = Math.sign(adspendDiff) === 1 ? "+" : "";
   return (
     <div className="min-h-screen bg-background font-sans antialiased">
       <header className="border-b font-sans">
@@ -128,7 +147,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">${formattedData?.Revenue}</div>
-                  <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                  <p className="text-xs text-muted-foreground">{revSign}{revenueDiff.toFixed(2)}% from previous period</p>
                 </CardContent>
               </Card>
               <Card>
@@ -138,7 +157,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">${formattedData?.Adspend}</div>
-                  <p className="text-xs text-muted-foreground">+180.1% from last month</p>
+                  <p className="text-xs text-muted-foreground">{adspendSign}{adspendDiff.toFixed(2)}% from previous period</p>
                 </CardContent>
               </Card>
               <Card>
@@ -148,7 +167,6 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{formattedData?.COGS}</div>
-                  <p className="text-xs text-muted-foreground">+19% from last month</p>
                 </CardContent>
               </Card>
               <Card>
@@ -158,7 +176,6 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{formattedData?.Profit}</div>
-                  <p className="text-xs text-muted-foreground">+201 since last hour</p>
                 </CardContent>
               </Card>
             </>
