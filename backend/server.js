@@ -50,12 +50,12 @@ app.get('/', async (req, res) => {
           });
 });
 
-app.get('/update', async (req, res) => {
+// app.get('/update', async (req, res) => {
 
-  update.updateOrderDatebase()
-  update.updateProductDatebase()
-  res.send("Updated.")
-});
+//   update.updateOrderDatebase()
+//   update.updateProductDatebase()
+//   res.send("Updated.")
+// });
 
 
 
