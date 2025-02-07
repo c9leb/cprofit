@@ -1,15 +1,26 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardFooter, CardTitle } from "@/components/ui/card"
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ModeToggle } from "@/components/ui/theme-toggle"
 import { DatePickerWithRange } from "@/components/ui/datepicker"
 import { LoadingSpinner } from "@/components/ui/loadingspinner"
-import { CreditCard, DollarSign, Users } from "lucide-react"
+import { CreditCard, DollarSign, Users, TrendingUp } from "lucide-react"
 import { Activity } from "lucide-react"
 import { DateRange } from 'react-day-picker';
 import { useEffect, useState } from 'react';
 
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-2))",
+  },
+} satisfies ChartConfig
+
 interface PeriodData {
+  from: string,
+  to: string,
   Revenue: number;
   Refunds: number;
   Adspend: number;
@@ -91,6 +102,11 @@ export default function Dashboard() {
   let adspendDiff = calculatePercentDifference(formattedData?.Adspend, previousData?.Adspend);
   let revSign = Math.sign(revenueDiff) === 1 ? "+" : "";
   let adspendSign = Math.sign(adspendDiff) === 1 ? "+" : "";
+
+  const dataForChart = Object.keys(data.currentPeriod.Revenues).map(date => ({
+    date,
+    revenue: data.currentPeriod.Revenues[date]
+  }));
   return (
     <div className="min-h-screen bg-background font-sans antialiased">
       <header className="border-b font-sans">
@@ -183,21 +199,50 @@ export default function Dashboard() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4">
+          {loading ? (
+            <div className="flex justify-center items-center col-span-4 h-32">
+              <LoadingSpinner size={48} className="text-gray-500" />
+            </div>
+          ) : (
+            <>
+          <Card className = "col-span-4"> 
             <CardHeader>
-              <CardTitle>Overview</CardTitle>
+              <CardTitle>Revenue</CardTitle>
+              <CardDescription>{data.currentPeriod.from} - {data.currentPeriod.to}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[350px] w-full">
-                {/* Bar chart would go here - using a placeholder div for now */}
-                <div className="h-full w-full bg-muted/10 rounded-lg"></div>
-              </div>
+              <ChartContainer config={chartConfig}>
+                <BarChart
+                  accessibilityLayer
+                  data={dataForChart}
+                  margin={{
+                    top: 20,
+                  }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickFormatter={(value) => value.slice(5, 10)}
+                  />
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent hideLabel />}
+                  />
+                  <Bar dataKey="revenue" fill="var(--color-desktop)" radius={8}>
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
             </CardContent>
           </Card>
+            </>
+          )}
+
           <Card className="col-span-3">
             <CardHeader>
               <CardTitle>Recent Sales</CardTitle>
-              <p className="text-sm text-muted-foreground">You made 265 sales this month.</p>
             </CardHeader>
             <CardContent>
               <div className="space-y-8">
@@ -205,7 +250,7 @@ export default function Dashboard() {
                   {
                     name: "Olivia Martin",
                     email: "olivia.martin@email.com",
-                    amount: "+$1,999.00",
+                    amount: "+$99.00",
                   },
                   {
                     name: "Jackson Lee",
