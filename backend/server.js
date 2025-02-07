@@ -70,9 +70,9 @@ app.get('/', async (req, res) => {
 
     return {
       Revenue: (totalRevenue - totalRefunds).toFixed(2),
-      Refunds: totalRefunds.toFixed(2),
-      Adspend: totalAdspend.toFixed(2),
-      COGS: totalCosts.toFixed(2),
+      Refunds: (totalRefunds).toFixed(2),
+      Adspend: totalAdspend,
+      COGS: (totalCosts).toFixed(2),
       Profit: (totalRevenue - totalCosts - totalAdspend - totalRefunds).toFixed(2),
       Revenues: revenues
     };
