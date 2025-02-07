@@ -2,11 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ... */
-
-
+@layer base {
+  :root {
+    --font-sans: 'Geist Sans', system-ui, sans-serif;
+  }
+}
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Geist Sans, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 

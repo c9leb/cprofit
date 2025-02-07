@@ -18,14 +18,29 @@ async function main() {
 
 app.get('/', async (req, res) => {
 
-  const today = new Date();
-  today.setHours(today.getHours() - 8);
-  today.setHours(0, 0, 0, 0);
+  const { from, to } = req.query;
+  
+  if (!from || !to) {
+    return res.status(400).json({ error: 'Missing date parameters. Use ?from=YYYY-MM-DD&to=YYYY-MM-DD' });
+  }
+
+  const fromDate = new Date(from);
+  const toDate = new Date(to);
+  
+  fromDate.setHours(0, 0, 0, 0);
+  toDate.setHours(23, 59, 59, 999);
+
   let totalRevenue = 0;
   let totalRefunds = 0;
   let totalCosts = 0;
-  let totalAdspend = await adspend.getFbAdspend(today);
-  const timeOrders = await Order.find({created_at: {$gt: today}});
+  let totalAdspend = await adspend.getFbAdspend(fromDate, toDate);
+
+  const timeOrders = await Order.find({
+    created_at: {
+      $gte: fromDate,
+      $lte: toDate
+    }});
+
   for (const order of timeOrders) {
     totalRevenue += order.total;
     totalRefunds += order.refundedAmount;
@@ -40,7 +55,6 @@ app.get('/', async (req, res) => {
     }
   }
   res.json({
-            Date: today.toISOString().slice(0, 10),
             Revenue: (totalRevenue-totalRefunds).toFixed(2),
             Refunds: (totalRefunds).toFixed(2),
             Adspend: totalAdspend,

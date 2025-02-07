@@ -14,12 +14,11 @@ const api = bizSdk.FacebookAdsApi.init(access_token);
 const fields = [
     'spend',
 ];
-async function getFbAdspend(today) {
-    let todayStr = today.toISOString().slice(0, 10);  // Convert to 'YYYY-MM-DD' format
+async function getFbAdspend(fromDate, toDate) {
 
     try {
         const spend = await (new AdAccount(ad_account_id)).getInsights(fields, {
-            'time_range': {'since': todayStr, 'until': todayStr},
+            'time_range': {'since': fromDate, 'until': toDate},
             'filtering': [],
             'level': 'campaign',
             'breakdowns': [],
