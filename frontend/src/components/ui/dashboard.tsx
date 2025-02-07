@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ModeToggle } from "@/components/ui/theme-toggle"
 import { DatePickerWithRange } from "@/components/ui/datepicker"
+import { LoadingSpinner } from "@/components/ui/loadingspinner"
 import { CreditCard, DollarSign, Users } from "lucide-react"
 import { Activity } from "lucide-react"
 import { DateRange } from 'react-day-picker';
@@ -31,15 +32,20 @@ export default function Dashboard() {
     from: new Date(),
     to: new Date(),
   });
-  
+  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     if (dateRange?.from && dateRange?.to) {
       const fromDate = dateRange.from.toISOString().slice(0, 10);
       const toDate = dateRange.to.toISOString().slice(0, 10);
+
+      setLoading(true);
       fetch(`https://cprofit-backend.vercel.app/?from=${fromDate}&to=${toDate}`)
         .then(response => response.json())
-        .then((data: DataType) => setData(data));
-      console.log(`https://cprofit-backend.vercel.app/?from=${fromDate}&to=${toDate}`);
+        .then((data: DataType) => setData(data))
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, [dateRange]); // Dependency array should include dateRange
   const handleDateChange = (newDateRange: DateRange | undefined) => {
@@ -50,6 +56,14 @@ export default function Dashboard() {
   if (!data) {
     return <div>Loading...</div>;
   }
+  const formattedData = {
+    Revenue: parseFloat(String(data.Revenue)),
+    Refunds: parseFloat(String(data.Refunds)),
+    Adspend: parseFloat(String(data.Adspend)),
+    COGS: parseFloat(String(data.COGS)),
+    Profit: parseFloat(String(data.Profit)),
+  };
+  
 
   return (
     <div className="min-h-screen bg-background font-sans antialiased">
@@ -94,46 +108,54 @@ export default function Dashboard() {
         </Tabs>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$45,231.89</div>
-              <p className="text-xs text-muted-foreground">+20.1% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+2350</div>
-              <p className="text-xs text-muted-foreground">+180.1% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sales</CardTitle>
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+12,234</div>
-              <p className="text-xs text-muted-foreground">+19% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+573</div>
-              <p className="text-xs text-muted-foreground">+201 since last hour</p>
-            </CardContent>
-          </Card>
+          {loading ? (
+            <div className="flex justify-center items-center col-span-4 h-32">
+              <LoadingSpinner size={48} className="text-gray-500" />
+            </div>
+          ) : (
+            <>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">${formattedData?.Revenue}</div>
+                  <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Adspend</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">${formattedData?.Adspend}</div>
+                  <p className="text-xs text-muted-foreground">+180.1% from last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total COGS</CardTitle>
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formattedData?.COGS}</div>
+                  <p className="text-xs text-muted-foreground">+19% from last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Profit</CardTitle>
+                  <Activity className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formattedData?.Profit}</div>
+                  <p className="text-xs text-muted-foreground">+201 since last hour</p>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">

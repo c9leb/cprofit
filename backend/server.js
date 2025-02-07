@@ -15,53 +15,86 @@ main().catch(err => console.log(err));
 async function main() {
   await mongoose.connect(process.env.MONGODB_URI);
 }
-
 app.get('/', async (req, res) => {
-
   const { from, to } = req.query;
-  
+
   if (!from || !to) {
     return res.status(400).json({ error: 'Missing date parameters. Use ?from=YYYY-MM-DD&to=YYYY-MM-DD' });
   }
 
   const fromDate = new Date(from);
   const toDate = new Date(to);
-  
+
   fromDate.setHours(0, 0, 0, 0);
   toDate.setHours(23, 59, 59, 999);
 
-  let totalRevenue = 0;
-  let totalRefunds = 0;
-  let totalCosts = 0;
-  let totalAdspend = await adspend.getFbAdspend(fromDate, toDate);
+  const daysDifference = (toDate - fromDate) / (1000 * 60 * 60 * 24) + 1;
+  const prevToDate = new Date(fromDate);
+  prevToDate.setDate(prevToDate.getDate() - 1);
+  const prevFromDate = new Date(prevToDate);
+  prevFromDate.setDate(prevFromDate.getDate() - daysDifference + 1);
 
-  const timeOrders = await Order.find({
-    created_at: {
-      $gte: fromDate,
-      $lte: toDate
-    }});
+  prevFromDate.setHours(0, 0, 0, 0);
+  prevToDate.setHours(23, 59, 59, 999);
 
-  for (const order of timeOrders) {
-    totalRevenue += order.total;
-    totalRefunds += order.refundedAmount;
-  }
-  for (const order of timeOrders) {
-    const products = order.products;
-    for (const sku of products) {
-      const product = await Product.findOne({_id: sku});
-      if (product) {
-        totalCosts += product.cost;
+  async function calculateMetrics(startDate, endDate) {
+    let totalRevenue = 0;
+    let totalRefunds = 0;
+    let totalCosts = 0;
+    let revenues = {};
+    let totalAdspend = await adspend.getFbAdspend(startDate, endDate);
+
+    const orders = await Order.find({
+      created_at: {
+        $gte: startDate,
+        $lte: endDate
+      }
+    });
+
+    for (const order of orders) {
+      totalRevenue += order.total;
+      const dateKey = order.created_at.toISOString().slice(0, 10);
+      revenues[dateKey] = (revenues[dateKey] || 0) + order.total;
+      revenues[dateKey] = parseFloat(revenues[dateKey].toFixed(2));
+      totalRefunds += order.refundedAmount;
+    }
+
+    for (const order of orders) {
+      for (const sku of order.products) {
+        const product = await Product.findOne({ _id: sku });
+        if (product) {
+          totalCosts += product.cost;
+        }
       }
     }
+
+    return {
+      Revenue: totalRevenue - totalRefunds,
+      Refunds: totalRefunds,
+      Adspend: totalAdspend,
+      COGS: totalCosts,
+      Profit: totalRevenue - totalCosts - totalAdspend - totalRefunds,
+      Revenues: revenues
+    };
   }
+
+  const currentMetrics = await calculateMetrics(fromDate, toDate);
+  const previousMetrics = await calculateMetrics(prevFromDate, prevToDate);
+
   res.json({
-            Revenue: (totalRevenue-totalRefunds).toFixed(2),
-            Refunds: (totalRefunds).toFixed(2),
-            Adspend: totalAdspend,
-            COGS: totalCosts.toFixed(2),
-            Profit: (totalRevenue-totalCosts-totalAdspend-totalRefunds).toFixed(2)
-          });
+    currentPeriod: {
+      from: fromDate.toISOString().slice(0, 10),
+      to: toDate.toISOString().slice(0, 10),
+      ...currentMetrics
+    },
+    previousPeriod: {
+      from: prevFromDate.toISOString().slice(0, 10),
+      to: prevToDate.toISOString().slice(0, 10),
+      ...previousMetrics
+    }
+  });
 });
+
 
 // app.get('/update', async (req, res) => {
 
