@@ -103,12 +103,14 @@ export default function Dashboard() {
   let revSign = Math.sign(revenueDiff) === 1 ? "+" : "";
   let adspendSign = Math.sign(adspendDiff) === 1 ? "+" : "";
 
-  const dataForChart = Object.keys(data.currentPeriod.Revenues)
-  .map(date => ({
-    date,
-    revenue: data.currentPeriod.Revenues[date]
-  }))
-  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const dataForChart = Object.keys(data.currentPeriod.Revenues).length > 0
+  ? Object.keys(data.currentPeriod.Revenues)
+      .map(date => ({
+        date,
+        revenue: data.currentPeriod.Revenues[date] || 0
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  : [];
 
   return (
     <div className="min-h-screen bg-background font-sans antialiased">
