@@ -105,11 +105,7 @@ app.get('/', async (req, res) => {
 
 
 
-/*
-
-WEBHOOKS
-
-*/
+//webhooks
 app.post('/webhooks/update', async (req, res) => {
   const order = req.body;
   const today = new Date();
