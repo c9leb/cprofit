@@ -100,8 +100,8 @@ export default function Dashboard() {
   };
   let revenueDiff = calculatePercentDifference(formattedData?.Revenue, previousData?.Revenue);
   let adspendDiff = calculatePercentDifference(formattedData?.Adspend, previousData?.Adspend);
-  let revSign = Math.sign(revenueDiff) === 1 ? "+" : "";
-  let adspendSign = Math.sign(adspendDiff) === 1 ? "+" : "";
+  let revSign = Math.sign(revenueDiff) === 1 ? "+" : "-";
+  let adspendSign = Math.sign(adspendDiff) === 1 ? "+" : "-";
 
   const dataForChart = (() => {
     const dates: { [date: string]: number } = {};
@@ -179,7 +179,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">${formattedData?.Revenue}</div>
-                  <p className="text-xs text-muted-foreground">{revSign}{revenueDiff.toFixed(2)}% from previous period</p>
+                  <p className="text-xs text-muted-foreground">{revSign ? revSign : ''}{revenueDiff ? revenueDiff.toFixed(2) : 0}% from previous period</p>
                 </CardContent>
               </Card>
               <Card>
@@ -189,7 +189,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">${formattedData?.Adspend}</div>
-                  <p className="text-xs text-muted-foreground">{adspendSign}{adspendDiff.toFixed(2)}% from previous period</p>
+                  <p className="text-xs text-muted-foreground">{adspendDiff ? adspendSign : ''}{adspendDiff ? adspendDiff.toFixed(2) : 0}% from previous period</p>
                 </CardContent>
               </Card>
               <Card>
@@ -198,7 +198,7 @@ export default function Dashboard() {
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{formattedData?.COGS}</div>
+                  <div className="text-2xl font-bold">${formattedData?.COGS}</div>
                 </CardContent>
               </Card>
               <Card>
@@ -207,7 +207,7 @@ export default function Dashboard() {
                   <Activity className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{formattedData?.Profit}</div>
+                  <div className="text-2xl font-bold">${formattedData?.Profit}</div>
                 </CardContent>
               </Card>
             </>
@@ -221,7 +221,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <>
-          <Card className = "col-span-4"> 
+          <Card className = "col-span-7"> 
             <CardHeader>
               <CardTitle>Revenue</CardTitle>
               <CardDescription>{data.currentPeriod.from} - {data.currentPeriod.to}</CardDescription>
